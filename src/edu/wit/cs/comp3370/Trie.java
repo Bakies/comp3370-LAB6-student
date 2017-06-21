@@ -17,13 +17,13 @@ public class Trie extends Speller {
 	private class TrieNode {
 		private TrieNode parent;
 		private TrieNode[] letters;
-		private boolean key;
+		private boolean isWord;
 		private char c;
 
 		private TrieNode(TrieNode parent, char c) {
 			this.parent = parent;
 			letters = new TrieNode[26];
-			key = false;
+			isWord = false;
 			this.c = c;
 		}
 
@@ -69,7 +69,7 @@ public class Trie extends Speller {
 		for (char c : s.toCharArray()) {
 			node = node.getMakeChild(c);
 		}
-		node.key = true;
+		node.isWord = true;
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class Trie extends Speller {
 			if (node == null)
 				return false;
 		}
-		return node.key;
+		return node.isWord;
 	}
 
 	@Override
@@ -95,29 +95,29 @@ public class Trie extends Speller {
 		return words;
 	}
 
-	private void recurSugg(String s, final int pos, final int editDist, TrieNode node, ArrayList<String> list) {
+	private void recurSugg(String target, final int depth, final int editDist, TrieNode currNode, ArrayList<String> words) {
 		if (editDist < 0) {
 			return;
 		}
-		if (node.key) {
-			if (pos == s.length()) {
+		if (currNode.isWord) {
+			if (depth == target.length()) {
 				StringBuilder sb = new StringBuilder();
-				TrieNode w = node;
+				TrieNode w = currNode;
 				while (w.parent != null) { // while not root
 					sb.append(w.c);
 					w = w.parent;
 				}
-				list.add(sb.reverse().toString());
+				words.add(sb.reverse().toString());
 			}
 		}
-		for (TrieNode n : node.getAllChildren()) {
+		for (TrieNode n : currNode.getAllChildren()) {
 			int x = editDist;
-			if (pos >= s.length()) {
+			if (depth >= target.length()) {
 				x--;
-			} else if (s.charAt(pos) != n.c) {
+			} else if (target.charAt(depth) != n.c) {
 				x--;
 			}
-			recurSugg(s, pos + 1, x, n, list);
+			recurSugg(target, depth + 1, x, n, words);
 		}
 	}
 
