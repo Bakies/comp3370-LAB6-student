@@ -17,31 +17,24 @@ public class Trie extends Speller {
 	private class TrieNode {
 		private TrieNode parent;
 		private TrieNode[] letters;
-		private boolean key, root;
+		private boolean key;
 		private char c;
 
 		private TrieNode(TrieNode parent, char c) {
 			this.parent = parent;
 			letters = new TrieNode[26];
 			key = false;
-			root = false;
 			this.c = c;
 		}
 
 		private TrieNode() {
+			parent = null;
 			letters = new TrieNode[26];
-			root = true;
 		}
 
 		private TrieNode getChild(char c) {
 			int i = c - 'a';
 			return letters[i];
-		}
-
-		private void makeChild(char c) {
-			int i = c - 'a';
-			if (letters[i] != null)
-				letters[i] = new TrieNode(this, c);
 		}
 
 		private TrieNode getMakeChild(char c) {
@@ -110,7 +103,7 @@ public class Trie extends Speller {
 			if (pos == s.length()) {
 				StringBuilder sb = new StringBuilder();
 				TrieNode w = node;
-				while (!w.root) {
+				while (w.parent != null) { // while not root
 					sb.append(w.c);
 					w = w.parent;
 				}
